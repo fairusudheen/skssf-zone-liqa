@@ -40,11 +40,11 @@ export const TARGET_PER_BRANCH = 5;
 export const EVENT = {
   title: "ലിഖാഅ്",
   latinTitle: "(LIQA') 2026",
-  dateLabel: "2026 ഡിസംബർ 13, വൈകിട്ട്",
-  dateIso: "2026-12-13",
+  dateLabel: "2026 നവംബർ 13, വൈകിട്ട്",
+  dateIso: "2026-11-13",
   venue: "SNEC കോളേജ് മൈതാനം, പുഞ്ചക്കാട്",
   organiser: "SKSSF പയ്യന്നൂർ മേഖലാ കമ്മിറ്റി",
-  timestamp: new Date("2026-12-13T00:00:00+05:30").getTime(),
+  timestamp: new Date("2026-11-13T00:00:00+05:30").getTime(),
 } as const;
 
 export function normalizeBranch(value: string): string {

@@ -1,7 +1,7 @@
 # ലിഖാഅ് (LIQA') 2026 — Next.js
 
 Registration, photo pass, QR check-in, and organiser dashboard for the SKSSF
-Payyanur regional meet on 13 December 2026.
+Payyanur regional meet on 13 November 2026.
 
 The original static site in the parent folder (`index.html`) is untouched while
 this replacement is prepared.

@@ -59,11 +59,11 @@ export default function Home() {
           </div>
 
           <div className="hero-bottom">
-            <time className="hero-date" dateTime="2026-12-13">
+            <time className="hero-date" dateTime="2026-11-13">
               <span className="micro" lang="en">
                 Date / Save it
               </span>
-              2026 ഡിസംബർ 13, വൈകിട്ട്
+              2026 നവംബർ 13, വൈകിട്ട്
             </time>
             <address className="hero-venue">
               <span className="micro" lang="en">
@@ -94,7 +94,7 @@ export default function Home() {
 
         <div
           className="marquee"
-          aria-label="ലിഖാഅ് 2026, ഡിസംബർ 13, പയ്യന്നൂർ"
+          aria-label="ലിഖാഅ് 2026, നവംബർ 13, പയ്യന്നൂർ"
         >
           <div className="marquee-track">
             <MarqueeGroup />
@@ -156,11 +156,11 @@ export default function Home() {
             സമയവും സ്ഥലവും
           </h2>
           <div className="details-grid reveal">
-            <time className="detail-block" dateTime="2026-12-13">
+            <time className="detail-block" dateTime="2026-11-13">
               <div className="detail-number" lang="en">
                 01 — DATE
               </div>
-              <p className="detail-value">2026 ഡിസംബർ 13, വൈകിട്ട്</p>
+              <p className="detail-value">2026 നവംബർ 13, വൈകിട്ട്</p>
             </time>
             <address className="detail-block">
               <div className="detail-number" lang="en">
@@ -174,7 +174,7 @@ export default function Home() {
 
           <div className="countdown-wrap reveal">
             <div className="countdown-heading">
-              <h3>ഡിസംബർ 13-ലേക്ക്</h3>
+              <h3>നവംബർ 13-ലേക്ക്</h3>
               <span className="micro" lang="en">
                 Countdown / IST
               </span>
