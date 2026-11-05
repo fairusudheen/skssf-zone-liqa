@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#f4f5fa"/>
+      <stop offset="1" stop-color="#e7eafa"/>
+    </linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#3b45ff"/>
+      <stop offset="1" stop-color="#242ddc"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <circle cx="1100" cy="85" r="270" fill="#e0e4ff"/>
+  <circle cx="1100" cy="85" r="192" fill="none" stroke="#c8ceff" stroke-width="2"/>
+  <path d="M0 526 Q330 455 670 535 T1200 500 V630 H0Z" fill="#eef0ff"/>
+  <rect x="66" y="58" width="82" height="7" rx="3.5" fill="url(#blue)"/>
+  <text x="66" y="112" fill="#11152b" font-family="Arial, sans-serif" font-size="28" font-weight="700" letter-spacing="2">SKSSF  /  PAYYANUR</text>
+  <text x="66" y="286" fill="#11152b" font-family="Arial, sans-serif" font-size="126" font-weight="700" letter-spacing="-7">LIQA'</text>
+  <text x="72" y="337" fill="#555d7b" font-family="Arial, sans-serif" font-size="29" font-weight="600" letter-spacing="5">LEADERS’ MEET  ·  MEMBERSHIP LAUNCH</text>
+  <rect x="66" y="389" width="430" height="82" rx="14" fill="url(#blue)"/>
+  <text x="94" y="445" fill="#ffffff" font-family="Arial, sans-serif" font-size="31" font-weight="700">13 NOVEMBER 2026</text>
+  <text x="68" y="526" fill="#343b5a" font-family="Arial, sans-serif" font-size="22" font-weight="600" letter-spacing="2">SNEC COLLEGE GROUND  ·  PUNNACHKAD</text>
+  <text x="943" y="277" fill="#303aff" font-family="Arial, sans-serif" font-size="184" font-weight="700" text-anchor="middle">’</text>
+  <text x="1010" y="460" fill="#11152b" font-family="Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="3" text-anchor="middle">2026</text>
+  <text x="1133" y="588" fill="#737b99" font-family="Arial, sans-serif" font-size="16" text-anchor="end">SKSSF PAYYANUR</text>
+</svg>

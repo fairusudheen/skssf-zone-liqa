@@ -15,6 +15,9 @@ const grotesk = Space_Grotesk({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://skssf-zone-liqa.vercel.app",
+  ),
   title: "ലിഖാഅ് (LIQA') 2026 — SKSSF പയ്യന്നൂർ",
   description:
     "ലിഖാഅ് 2026 — SKSSF പയ്യന്നൂർ മേഖലാ കമ്മിറ്റിയുടെ നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും. 2026 നവംബർ 13.",
@@ -25,6 +28,18 @@ export const metadata: Metadata = {
       "നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും · 2026 നവംബർ 13 · SNEC കോളേജ് മൈതാനം, പുഞ്ചക്കാട്",
     locale: "ml_IN",
     type: "website",
+    images: [
+      {
+        url: "/liqa-share.png",
+        width: 1200,
+        height: 630,
+        alt: "LIQA' 2026 — SKSSF Payyanur regional meet, 13 November 2026",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/liqa-share.png"],
   },
 };
 
