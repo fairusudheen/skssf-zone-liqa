@@ -121,7 +121,7 @@ export default function PassCard({
             LIQA&apos; 2026 / Entry pass
           </span>
           <span className="micro" lang="en">
-            13 DEC / Payyanur
+            13 NOV / Payyanur
           </span>
         </div>
         <div className="pass-body">

@@ -7,7 +7,7 @@ import SiteHeader from "@/components/SiteHeader";
 
 const marqueeItems = [
   "LIQA' 2026",
-  "13 DECEMBER",
+  "13 NOVEMBER",
   "FIVE FROM EVERY BRANCH",
   "SNEC COLLEGE GROUND",
   "PAYYANUR",

@@ -8,7 +8,7 @@ this replacement is prepared.
 
 ## What is included
 
-- Malayalam registration form with the 20 branches and 8 roles
+- Malayalam registration form with the 22 branches and 8 roles
 - Shared per-branch count with a target of five
 - Optional delegate photo (compressed in the browser, processed with `sharp`)
 - Private Cloudflare R2 photo storage
@@ -49,7 +49,7 @@ membership before returning any data.
 ## 2. Create the R2 bucket
 
 1. In Cloudflare, open **R2 → Create bucket** and name it
-   `liqa-2026-photos`. Keep public access **disabled**.
+   `skssf-zone`. Keep public access **disabled**.
 2. Open **R2 → Manage R2 API Tokens → Create API token**.
 3. Give it **Object Read & Write** permission limited to this bucket.
 4. Note the **Access Key ID**, **Secret Access Key**, and the account ID from
@@ -75,7 +75,7 @@ cp .env.example .env.local
 | `R2_ACCOUNT_ID` | Cloudflare account ID |
 | `R2_ACCESS_KEY_ID` | R2 API token access key |
 | `R2_SECRET_ACCESS_KEY` | R2 API token secret |
-| `R2_BUCKET_NAME` | `liqa-2026-photos` |
+| `R2_BUCKET_NAME` | `skssf-zone` |
 | `NEXT_PUBLIC_SITE_URL` | Final public URL used inside QR codes |
 
 `NEXT_PUBLIC_SITE_URL` must be the production domain before delegates register,

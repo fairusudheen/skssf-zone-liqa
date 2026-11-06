@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import CustomSelect from "@/components/CustomSelect";
 import PassCard from "@/components/PassCard";
 import PhotoField from "@/components/PhotoField";
 import { BRANCHES, ROLES, TARGET_PER_BRANCH } from "@/lib/constants";
@@ -113,8 +114,8 @@ export default function RegistrationSection() {
 
   const nameRef = useRef<HTMLInputElement>(null);
   const phoneRef = useRef<HTMLInputElement>(null);
-  const branchRef = useRef<HTMLSelectElement>(null);
-  const roleRef = useRef<HTMLSelectElement>(null);
+  const branchRef = useRef<HTMLButtonElement>(null);
+  const roleRef = useRef<HTMLButtonElement>(null);
   const successRef = useRef<HTMLElement>(null);
   const successTitleRef = useRef<HTMLHeadingElement>(null);
 
@@ -639,57 +640,32 @@ export default function RegistrationSection() {
                     <span className="field-index" lang="en">
                       03
                     </span>
-                    <label className="field-label" htmlFor="branch">
+                    <label
+                      className="field-label"
+                      htmlFor="branch"
+                      id="branch-label"
+                    >
                       ശാഖയുടെ പേര്
                     </label>
                   </div>
                   <div className="field-control">
-                    <select
-                      ref={branchRef}
-                      className="branch-select"
+                    <CustomSelect
                       id="branch"
-                      name="branch"
-                      aria-describedby="branch-note"
-                      aria-invalid={
-                        touched.branch && Boolean(fieldError("branch"))
-                      }
-                      required
+                      labelId="branch-label"
                       value={branch}
+                      options={BRANCHES}
+                      placeholder="ശാഖ തിരഞ്ഞെടുക്കുക"
+                      menuLabel="ശാഖകൾ"
+                      describedBy="branch-note"
+                      invalid={touched.branch && Boolean(fieldError("branch"))}
                       disabled={submitting}
-                      onChange={(event) => {
-                        setBranch(event.target.value);
+                      triggerRef={branchRef}
+                      onChange={(value) => {
+                        setBranch(value);
                         markTouched("branch");
                       }}
                       onBlur={() => markTouched("branch")}
-                    >
-                      <option value="">ശാഖ തിരഞ്ഞെടുക്കുക</option>
-                      {BRANCHES.map((name) => (
-                        <option value={name} key={name}>
-                          {name}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="valid-mark" aria-hidden="true">
-                      <svg viewBox="0 0 20 20" fill="none">
-                        <path
-                          d="m4 10 4 4 8-9"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                    </span>
-                    <svg
-                      className="select-arrow icon"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="m4 7 6 6 6-6"
-                        stroke="currentColor"
-                        strokeWidth="1.7"
-                      />
-                    </svg>
+                    />
                   </div>
                   <p className="field-note" id="branch-note" aria-live="polite">
                     {note("branch")}
@@ -701,54 +677,32 @@ export default function RegistrationSection() {
                     <span className="field-index" lang="en">
                       04
                     </span>
-                    <label className="field-label" htmlFor="role">
+                    <label
+                      className="field-label"
+                      htmlFor="role"
+                      id="role-label"
+                    >
                       SKSSF-ലെ ചുമതല
                     </label>
                   </div>
                   <div className="field-control">
-                    <select
-                      ref={roleRef}
+                    <CustomSelect
                       id="role"
-                      name="role"
-                      aria-describedby="role-note"
-                      aria-invalid={touched.role && Boolean(fieldError("role"))}
-                      required
+                      labelId="role-label"
                       value={role}
+                      options={ROLES}
+                      placeholder="ചുമതല തിരഞ്ഞെടുക്കുക"
+                      menuLabel="ചുമതലകൾ"
+                      describedBy="role-note"
+                      invalid={touched.role && Boolean(fieldError("role"))}
                       disabled={submitting}
-                      onChange={(event) => {
-                        setRole(event.target.value);
+                      triggerRef={roleRef}
+                      onChange={(value) => {
+                        setRole(value);
                         markTouched("role");
                       }}
                       onBlur={() => markTouched("role")}
-                    >
-                      <option value="">ചുമതല തിരഞ്ഞെടുക്കുക</option>
-                      {ROLES.map((name) => (
-                        <option value={name} key={name}>
-                          {name}
-                        </option>
-                      ))}
-                    </select>
-                    <span className="valid-mark" aria-hidden="true">
-                      <svg viewBox="0 0 20 20" fill="none">
-                        <path
-                          d="m4 10 4 4 8-9"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        />
-                      </svg>
-                    </span>
-                    <svg
-                      className="select-arrow icon"
-                      viewBox="0 0 20 20"
-                      fill="none"
-                      aria-hidden="true"
-                    >
-                      <path
-                        d="m4 7 6 6 6-6"
-                        stroke="currentColor"
-                        strokeWidth="1.7"
-                      />
-                    </svg>
+                    />
                   </div>
                   <p className="field-note" id="role-note" aria-live="polite">
                     {note("role")}

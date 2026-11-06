@@ -19,6 +19,8 @@ export const BRANCHES = [
   "അങ്ങാടി",
   "പാലത്തറ",
   "തായിനേരി",
+  "ആലിൻകീഴ്",
+  "വെള്ളൂർ",
 ] as const;
 
 export const ROLES = [
