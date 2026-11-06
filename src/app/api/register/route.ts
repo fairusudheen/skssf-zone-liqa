@@ -66,6 +66,12 @@ export async function POST(request: Request) {
     .maybeSingle();
 
   if (branchError) {
+    console.error("Branch lookup failed", {
+      code: branchError.code,
+      message: branchError.message,
+      details: branchError.details,
+      hint: branchError.hint,
+    });
     return fail(
       "BRANCH_LOOKUP_FAILED",
       "ശാഖ വിവരങ്ങൾ എടുക്കാനായില്ല.",
@@ -121,7 +127,8 @@ export async function POST(request: Request) {
     photoKey = `photos/${crypto.randomUUID()}.webp`;
     try {
       await uploadPhoto(photoKey, processedPhoto, "image/webp");
-    } catch {
+    } catch (uploadError) {
+      console.error("R2 photo upload failed", uploadError);
       return fail(
         "PHOTO_UPLOAD_FAILED",
         "ഫോട്ടോ സൂക്ഷിക്കാനായില്ല. വീണ്ടും ശ്രമിക്കുക.",
@@ -158,6 +165,13 @@ export async function POST(request: Request) {
         409,
       );
     }
+
+    console.error("Registration insert failed", {
+      code: insertError?.code,
+      message: insertError?.message,
+      details: insertError?.details,
+      hint: insertError?.hint,
+    });
 
     return fail(
       "REGISTRATION_FAILED",

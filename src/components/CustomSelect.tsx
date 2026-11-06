@@ -66,7 +66,7 @@ export default function CustomSelect({
 }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const listRef = useRef<HTMLUListElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -250,7 +250,6 @@ export default function CustomSelect({
           if (next instanceof Node && rootRef.current?.contains(next)) {
             return;
           }
-          setOpen(false);
           onBlur?.();
         }}
       >
@@ -280,7 +279,7 @@ export default function CustomSelect({
             <span>{String(options.length).padStart(2, "0")}</span>
           </div>
 
-          <ul
+          <div
             className="custom-select-list"
             id={listboxId}
             role="listbox"
@@ -293,7 +292,7 @@ export default function CustomSelect({
               const active = index === activeIndex;
 
               return (
-                <li
+                <button
                   className={[
                     "custom-select-option",
                     selected ? "is-selected" : "",
@@ -303,7 +302,9 @@ export default function CustomSelect({
                     .join(" ")}
                   id={`${id}-option-${index}`}
                   key={option}
+                  type="button"
                   role="option"
+                  tabIndex={-1}
                   aria-selected={selected}
                   onPointerDown={(event) => {
                     if (event.pointerType === "mouse") {
@@ -311,6 +312,7 @@ export default function CustomSelect({
                     }
                   }}
                   onMouseEnter={() => setActiveIndex(index)}
+                  onFocus={() => setActiveIndex(index)}
                   onClick={() => selectOption(index)}
                 >
                   <span className="custom-select-index" aria-hidden="true">
@@ -320,10 +322,10 @@ export default function CustomSelect({
                   <span className="custom-select-check" aria-hidden="true">
                     {selected ? <CheckIcon /> : null}
                   </span>
-                </li>
+                </button>
               );
             })}
-          </ul>
+          </div>
         </div>
       )}
     </div>

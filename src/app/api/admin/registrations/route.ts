@@ -35,6 +35,12 @@ export async function GET(request: Request) {
     .order("created_at", { ascending: false });
 
   if (error) {
+    console.error("Admin registrations load failed", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
     return NextResponse.json(
       { code: "LOAD_FAILED", message: "വിവരങ്ങൾ എടുക്കാനായില്ല." },
       { status: 500 },

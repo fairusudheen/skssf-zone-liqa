@@ -22,6 +22,13 @@ export async function GET() {
     const { data, error } = await supabase.rpc("branch_quota");
 
     if (error || !Array.isArray(data)) {
+      console.error("branch_quota RPC failed", {
+        code: error?.code,
+        message: error?.message,
+        details: error?.details,
+        hint: error?.hint,
+        hasData: Array.isArray(data),
+      });
       return NextResponse.json(
         { branches: empty, configured: true },
         { headers: { "Cache-Control": "no-store" } },
@@ -45,7 +52,8 @@ export async function GET() {
       },
       { headers: { "Cache-Control": "no-store" } },
     );
-  } catch {
+  } catch (error) {
+    console.error("branch_quota request failed", error);
     return NextResponse.json(
       { branches: empty, configured: true },
       { headers: { "Cache-Control": "no-store" } },

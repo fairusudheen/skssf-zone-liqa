@@ -130,11 +130,13 @@ language plpgsql
 security definer
 set search_path = ''
 as $$
+#variable_conflict use_column
 declare
   v_reg public.registrations%rowtype;
   v_checked timestamptz;
   v_already boolean := false;
   v_total integer;
+  v_rows integer;
 begin
   select * into v_reg
   from public.registrations
@@ -153,14 +155,16 @@ begin
   else
     insert into public.attendance (registration_id, checked_in_by)
     values (v_reg.id, p_organiser)
-    on conflict (registration_id) do nothing
-    returning checked_in_at into v_checked;
+    on conflict on constraint attendance_pkey do nothing;
 
-    if v_checked is null then
+    get diagnostics v_rows = row_count;
+
+    select a.checked_in_at into v_checked
+    from public.attendance a
+    where a.registration_id = v_reg.id;
+
+    if v_rows = 0 then
       -- Another organiser won the race; report the original check-in time.
-      select a.checked_in_at into v_checked
-      from public.attendance a
-      where a.registration_id = v_reg.id;
       v_already := true;
     end if;
   end if;

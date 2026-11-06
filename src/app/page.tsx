@@ -59,11 +59,11 @@ export default function Home() {
           </div>
 
           <div className="hero-bottom">
-            <time className="hero-date" dateTime="2026-11-13">
+            <time className="hero-date" dateTime="2026-11-13T18:00:00+05:30">
               <span className="micro" lang="en">
-                Date / Save it
+                Date &amp; time / Save it
               </span>
-              2026 നവംബർ 13, വൈകിട്ട്
+              2026 നവംബർ 13, വൈകിട്ട് 6 മണിക്ക്
             </time>
             <address className="hero-venue">
               <span className="micro" lang="en">
@@ -156,11 +156,13 @@ export default function Home() {
             സമയവും സ്ഥലവും
           </h2>
           <div className="details-grid reveal">
-            <time className="detail-block" dateTime="2026-11-13">
+            <time className="detail-block" dateTime="2026-11-13T18:00:00+05:30">
               <div className="detail-number" lang="en">
-                01 — DATE
+                01 — DATE / TIME
               </div>
-              <p className="detail-value">2026 നവംബർ 13, വൈകിട്ട്</p>
+              <p className="detail-value">
+                2026 നവംബർ 13, വൈകിട്ട് 6 മണിക്ക്
+              </p>
             </time>
             <address className="detail-block">
               <div className="detail-number" lang="en">

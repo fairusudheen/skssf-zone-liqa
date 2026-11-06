@@ -20,12 +20,12 @@ export const metadata: Metadata = {
   ),
   title: "ലിഖാഅ് (LIQA') 2026 — SKSSF പയ്യന്നൂർ",
   description:
-    "ലിഖാഅ് 2026 — SKSSF പയ്യന്നൂർ മേഖലാ കമ്മിറ്റിയുടെ നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും. 2026 നവംബർ 13.",
+    "ലിഖാഅ് 2026 — SKSSF പയ്യന്നൂർ മേഖലാ കമ്മിറ്റിയുടെ നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും. 2026 നവംബർ 13, വൈകിട്ട് 6 മണിക്ക്.",
   applicationName: "LIQA' 2026",
   openGraph: {
     title: "ലിഖാഅ് (LIQA') 2026",
     description:
-      "നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും · 2026 നവംബർ 13 · SNEC കോളേജ് മൈതാനം, പുഞ്ചക്കാട്",
+      "നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും · 2026 നവംബർ 13, വൈകിട്ട് 6 മണിക്ക് · SNEC കോളേജ് മൈതാനം, പുഞ്ചക്കാട്",
     locale: "ml_IN",
     type: "website",
     images: [
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
         url: "/liqa-share.png",
         width: 1200,
         height: 630,
-        alt: "LIQA' 2026 — SKSSF Payyanur regional meet, 13 November 2026",
+        alt: "LIQA' 2026 — SKSSF Payyanur regional meet, 13 November 2026, 6 PM",
       },
     ],
   },

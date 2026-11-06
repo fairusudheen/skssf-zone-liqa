@@ -76,6 +76,12 @@ export async function POST(request: Request) {
   });
 
   if (error) {
+    console.error("mark_attendance RPC failed", {
+      code: error.code,
+      message: error.message,
+      details: error.details,
+      hint: error.hint,
+    });
     return fail(
       "ATTENDANCE_FAILED",
       "ഹാജർ രേഖപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക.",
