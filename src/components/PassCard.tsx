@@ -9,6 +9,172 @@ function safeFilename(value: string) {
   return value.replace(/[^a-z0-9-]+/gi, "-").toLowerCase();
 }
 
+async function waitForImage(image: HTMLImageElement) {
+  if (!image.complete || image.naturalWidth === 0) {
+    await new Promise<void>((resolve) => {
+      function finish() {
+        image.removeEventListener("load", finish);
+        image.removeEventListener("error", finish);
+        resolve();
+      }
+      image.addEventListener("load", finish);
+      image.addEventListener("error", finish);
+    });
+  }
+
+  if (typeof image.decode === "function") {
+    try {
+      await image.decode();
+    } catch {
+      // A broken optional image must not block the remaining pass.
+    }
+  }
+}
+
+async function prepareImagesForCapture(card: HTMLElement) {
+  const restores: Array<() => void> = [];
+  const images = Array.from(card.querySelectorAll("img"));
+
+  for (const image of images) {
+    const original = image.getAttribute("src");
+
+    if (!original?.startsWith("data:")) {
+      await waitForImage(image);
+      continue;
+    }
+
+    try {
+      const blob = await (await fetch(original)).blob();
+      const objectUrl = URL.createObjectURL(blob);
+      image.src = objectUrl;
+      await waitForImage(image);
+      restores.push(() => {
+        image.src = original;
+        URL.revokeObjectURL(objectUrl);
+      });
+    } catch {
+      await waitForImage(image);
+    }
+  }
+
+  return () => {
+    restores.forEach((restore) => restore());
+  };
+}
+
+async function waitForAnimations(card: HTMLElement) {
+  if (typeof card.getAnimations !== "function") return;
+
+  try {
+    const animations = card.getAnimations({ subtree: true });
+    await Promise.all(
+      animations.map((animation) =>
+        animation.finished.catch(() => undefined),
+      ),
+    );
+  } catch {
+    // Animation support varies; capture can continue without waiting.
+  }
+}
+
+async function qrIsVisible(card: HTMLElement, dataUrl: string) {
+  const qr = card.querySelector<HTMLImageElement>(".pass-qr img");
+  if (!qr) return true;
+
+  const cardRect = card.getBoundingClientRect();
+  const qrRect = qr.getBoundingClientRect();
+  if (!cardRect.width || !qrRect.width) return true;
+
+  const image = new Image();
+  image.src = dataUrl;
+
+  try {
+    await image.decode();
+  } catch {
+    return true;
+  }
+
+  const scale = image.naturalWidth / cardRect.width;
+  const sourceX = Math.max(
+    0,
+    Math.round((qrRect.left - cardRect.left) * scale),
+  );
+  const sourceY = Math.max(
+    0,
+    Math.round((qrRect.top - cardRect.top) * scale),
+  );
+  const sourceWidth = Math.min(
+    image.naturalWidth - sourceX,
+    Math.round(qrRect.width * scale),
+  );
+  const sourceHeight = Math.min(
+    image.naturalHeight - sourceY,
+    Math.round(qrRect.height * scale),
+  );
+
+  if (sourceWidth < 10 || sourceHeight < 10) return true;
+
+  const canvas = document.createElement("canvas");
+  canvas.width = sourceWidth;
+  canvas.height = sourceHeight;
+  const context = canvas.getContext("2d", { willReadFrequently: true });
+  if (!context) return true;
+
+  context.drawImage(
+    image,
+    sourceX,
+    sourceY,
+    sourceWidth,
+    sourceHeight,
+    0,
+    0,
+    sourceWidth,
+    sourceHeight,
+  );
+
+  const pixels = context.getImageData(
+    0,
+    0,
+    sourceWidth,
+    sourceHeight,
+  ).data;
+  let darkPixels = 0;
+
+  for (let index = 0; index < pixels.length; index += 4) {
+    if (
+      pixels[index] + pixels[index + 1] + pixels[index + 2] <
+      360
+    ) {
+      darkPixels += 1;
+    }
+  }
+
+  return darkPixels / (sourceWidth * sourceHeight) > 0.08;
+}
+
+async function captureCard(card: HTMLElement, format: "png" | "jpeg") {
+  const restoreImages = await prepareImagesForCapture(card);
+
+  try {
+    await waitForAnimations(card);
+
+    await new Promise<void>((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+
+    const { toJpeg, toPng } = await import("html-to-image");
+    const options = {
+      pixelRatio: 2,
+      backgroundColor: "#F1F3F7",
+    };
+    return format === "png"
+      ? await toPng(card, options)
+      : await toJpeg(card, { ...options, quality: 0.92 });
+  } finally {
+    restoreImages();
+  }
+}
+
 export default function PassCard({
   data,
   withActions = false,
@@ -25,17 +191,25 @@ export default function PassCard({
   const fileBase = `liqa-2026-pass-${safeFilename(data.code || data.token)}`;
 
   async function renderCard(format: "png" | "jpeg"): Promise<string> {
-    if (!cardRef.current) throw new Error("PASS_NOT_READY");
+    const card = cardRef.current;
+    if (!card) throw new Error("PASS_NOT_READY");
+
     if (document.fonts?.ready) await document.fonts.ready;
-    const { toJpeg, toPng } = await import("html-to-image");
-    const options = {
-      pixelRatio: 2,
-      backgroundColor: "#F1F3F7",
-      cacheBust: true,
-    };
-    return format === "png"
-      ? toPng(cardRef.current, options)
-      : toJpeg(cardRef.current, { ...options, quality: 0.92 });
+
+    let dataUrl = await captureCard(card, format);
+
+    if (!(await qrIsVisible(card, dataUrl))) {
+      await new Promise<void>((resolve) => {
+        window.setTimeout(resolve, 150);
+      });
+      dataUrl = await captureCard(card, format);
+    }
+
+    if (!(await qrIsVisible(card, dataUrl))) {
+      throw new Error("QR_NOT_CAPTURED");
+    }
+
+    return dataUrl;
   }
 
   async function downloadPng() {
@@ -49,8 +223,12 @@ export default function PassCard({
       document.body.appendChild(link);
       link.click();
       link.remove();
-    } catch {
-      setMessage("PNG ഡൗൺലോഡ് പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error && error.message === "QR_NOT_CAPTURED"
+          ? "ക്യൂ ആർ കോഡ് ഉൾപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+          : "PNG ഡൗൺലോഡ് പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.",
+      );
     } finally {
       setBusy(null);
     }
@@ -91,8 +269,12 @@ export default function PassCard({
         height,
       );
       pdf.save(`${fileBase}.pdf`);
-    } catch {
-      setMessage("PDF ഡൗൺലോഡ് പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.");
+    } catch (error) {
+      setMessage(
+        error instanceof Error && error.message === "QR_NOT_CAPTURED"
+          ? "ക്യൂ ആർ കോഡ് ഉൾപ്പെടുത്താനായില്ല. വീണ്ടും ശ്രമിക്കുക."
+          : "PDF ഡൗൺലോഡ് പരാജയപ്പെട്ടു. വീണ്ടും ശ്രമിക്കുക.",
+      );
     } finally {
       setBusy(null);
     }
@@ -152,6 +334,8 @@ export default function PassCard({
                 alt="ചെക്ക്-ഇൻ ക്യൂ ആർ കോഡ്"
                 width={132}
                 height={132}
+                loading="eager"
+                decoding="sync"
               />
               <span lang="en">SCAN TO CHECK IN</span>
             </div>
