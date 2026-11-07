@@ -83,6 +83,34 @@ export async function POST(request: Request) {
     return fail("INVALID_BRANCH", "ശരിയായ ശാഖ തിരഞ്ഞെടുക്കുക.", 400);
   }
 
+  const { data: existingPhone, error: phoneLookupError } = await supabase
+    .from("registrations")
+    .select("id")
+    .eq("phone", input.phone)
+    .maybeSingle();
+
+  if (phoneLookupError) {
+    console.error("Phone lookup failed", {
+      code: phoneLookupError.code,
+      message: phoneLookupError.message,
+      details: phoneLookupError.details,
+      hint: phoneLookupError.hint,
+    });
+    return fail(
+      "REGISTRATION_FAILED",
+      "രജിസ്ട്രേഷൻ പൂർത്തിയായില്ല. വീണ്ടും ശ്രമിക്കുക.",
+      500,
+    );
+  }
+
+  if (existingPhone) {
+    return fail(
+      "DUPLICATE_PHONE",
+      "ഈ മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് രജിസ്ട്രേഷൻ നടത്തിയിട്ടുണ്ട്.",
+      409,
+    );
+  }
+
   let photoKey: string | null = null;
   let processedPhoto: Buffer | null = null;
 

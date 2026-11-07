@@ -10,6 +10,16 @@ export default function SiteFooter() {
               ലിഖാഅ് <span className="latin" lang="en">/ 2026</span>
             </p>
             <p className="footer-signoff">SKSSF പയ്യന്നൂർ മേഖലാ കമ്മിറ്റി</p>
+            <p className="footer-credit" lang="en">
+              Developed by{" "}
+              <a
+                href="https://fairooz.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                fairooz.dev
+              </a>
+            </p>
           </div>
           <Link className="button button-outline footer-admin" href="/admin">
             <span>സംഘാടകർക്ക്</span>

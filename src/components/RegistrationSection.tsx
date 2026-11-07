@@ -5,6 +5,7 @@ import CustomSelect from "@/components/CustomSelect";
 import PassCard from "@/components/PassCard";
 import PhotoField from "@/components/PhotoField";
 import { BRANCHES, ROLES, TARGET_PER_BRANCH } from "@/lib/constants";
+import { isValidMobile, normalizePhone } from "@/lib/phone";
 import type { PassData } from "@/lib/types";
 
 type FieldKey = "fullName" | "phone" | "branch" | "role";
@@ -46,7 +47,7 @@ function validate(fullName: string, phone: string, branch: string, role: string)
 
   if (!phone.trim()) {
     errors.phone = "ദയവായി മൊബൈൽ നമ്പർ നൽകുക.";
-  } else if (!/^[6-9]\d{9}$/.test(phone.trim())) {
+  } else if (!isValidMobile(normalizePhone(phone))) {
     errors.phone =
       "മൊബൈൽ നമ്പർ 6, 7, 8 അല്ലെങ്കിൽ 9 എന്നിവയിൽ ഒന്നിൽ തുടങ്ങി കൃത്യം 10 അക്കങ്ങൾ ആയിരിക്കണം.";
   }
@@ -287,7 +288,7 @@ export default function RegistrationSection() {
     try {
       const form = new FormData();
       form.append("fullName", fullName.trim());
-      form.append("phone", phone.trim());
+      form.append("phone", normalizePhone(phone));
       form.append("branch", branch);
       form.append("role", role);
       if (photoFile) form.append("photo", photoFile, photoFile.name);
@@ -306,7 +307,12 @@ export default function RegistrationSection() {
             "ഈ മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് രജിസ്ട്രേഷൻ നടത്തിയിട്ടുണ്ട്. മറ്റൊരു നമ്പർ ഉപയോഗിക്കുക.";
           setPhoneServerError(message);
           setStatus(message);
-          phoneRef.current?.focus();
+          window.setTimeout(() => {
+            const input = phoneRef.current;
+            if (!input) return;
+            input.focus();
+            input.scrollIntoView({ block: "center" });
+          }, 120);
           return;
         }
 
@@ -601,7 +607,6 @@ export default function RegistrationSection() {
                         type="tel"
                         inputMode="numeric"
                         autoComplete="tel"
-                        maxLength={10}
                         pattern="[6-9][0-9]{9}"
                         placeholder="10 അക്ക നമ്പർ"
                         aria-describedby="phone-note"
@@ -612,9 +617,7 @@ export default function RegistrationSection() {
                         value={phone}
                         disabled={submitting}
                         onChange={(event) => {
-                          setPhone(
-                            event.target.value.replace(/\D/g, "").slice(0, 10),
-                          );
+                          setPhone(normalizePhone(event.target.value));
                           setPhoneServerError("");
                         }}
                         onBlur={() => markTouched("phone")}
@@ -630,7 +633,8 @@ export default function RegistrationSection() {
                       </span>
                     </div>
                     <p className="field-note" id="phone-note" aria-live="polite">
-                      {note("phone")}
+                      {note("phone") ||
+                        "ഒരു മൊബൈൽ നമ്പർ ഉപയോഗിച്ച് ഒരു രജിസ്ട്രേഷൻ മാത്രം."}
                     </p>
                   </div>
                 </div>

@@ -455,7 +455,8 @@ export default function AdminPage() {
                       <th>ഫോട്ടോ</th>
                       <th>പാസ്</th>
                       <th>ഹാജർ</th>
-                      <th>സമയം</th>
+                      <th>ഹാജർ സമയം</th>
+                      <th>രജിസ്ട്രേഷൻ സമയം</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -485,12 +486,19 @@ export default function AdminPage() {
                               <span className="status-pending">ഇല്ല</span>
                             )}
                           </td>
-                          <td>{formatMalayalamDate(row.created_at)}</td>
+                          <td className="cell-time">
+                            {row.checked_in_at
+                              ? formatMalayalamDate(row.checked_in_at)
+                              : "—"}
+                          </td>
+                          <td className="cell-time">
+                            {formatMalayalamDate(row.created_at)}
+                          </td>
                         </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan={9} className="empty-row">
+                        <td colSpan={10} className="empty-row">
                           രജിസ്ട്രേഷനുകൾ ഇതുവരെ ഇല്ല.
                         </td>
                       </tr>

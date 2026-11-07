@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   description:
     "ലിഖാഅ് 2026 — SKSSF പയ്യന്നൂർ മേഖലാ കമ്മിറ്റിയുടെ നേതൃസംഗമവും മെമ്പർഷിപ്പ് വിതരണോദ്ഘാടനവും. 2026 നവംബർ 13, വൈകിട്ട് 6 മണിക്ക്.",
   applicationName: "LIQA' 2026",
+  authors: [{ name: "fairooz.dev", url: "https://fairooz.dev" }],
+  creator: "fairooz.dev",
   openGraph: {
     title: "ലിഖാഅ് (LIQA') 2026",
     description:
