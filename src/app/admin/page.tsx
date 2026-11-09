@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { useAdminSession } from "@/components/useAdminSession";
 import {
@@ -26,6 +26,8 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [lastUpdated, setLastUpdated] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState<string | null>(null);
+  const branchDetailRef = useRef<HTMLElement>(null);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -90,11 +92,12 @@ export default function AdminPage() {
   const branches = useMemo(() => {
     const groups = new Map<
       string,
-      { name: string; count: number; checked: number }
+      { key: string; name: string; count: number; checked: number }
     >();
     rows.forEach((row) => {
       const key = row.branch_key || row.branch_name;
       const current = groups.get(key) || {
+        key,
         name: row.branch_name,
         count: 0,
         checked: 0,
@@ -107,6 +110,29 @@ export default function AdminPage() {
       (a, b) => b.count - a.count || a.name.localeCompare(b.name, "ml"),
     );
   }, [rows]);
+
+  const selectedBranchDetail = useMemo(() => {
+    if (!selectedBranch) return null;
+
+    const branch = branches.find((item) => item.key === selectedBranch);
+    if (!branch) return null;
+
+    return {
+      ...branch,
+      rows: rows.filter(
+        (row) => (row.branch_key || row.branch_name) === selectedBranch,
+      ),
+    };
+  }, [branches, rows, selectedBranch]);
+
+  useEffect(() => {
+    if (!selectedBranch) return;
+
+    branchDetailRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }, [selectedBranch]);
 
   const checkedIn = rows.filter((row) => row.checked_in_at).length;
   const completed = branches.filter(
@@ -390,8 +416,34 @@ export default function AdminPage() {
                   <tbody>
                     {branches.length ? (
                       branches.map((branch) => (
-                        <tr key={branch.name}>
-                          <td>{branch.name}</td>
+                        <tr key={branch.key}>
+                          <td>
+                            <button
+                              className="branch-link"
+                              type="button"
+                              aria-expanded={selectedBranch === branch.key}
+                              aria-controls="branch-detail"
+                              onClick={() =>
+                                setSelectedBranch((current) =>
+                                  current === branch.key ? null : branch.key,
+                                )
+                              }
+                            >
+                              <span>{branch.name}</span>
+                              <svg
+                                className="icon"
+                                viewBox="0 0 20 20"
+                                fill="none"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M10 3v14M3 10h14"
+                                  stroke="currentColor"
+                                  strokeWidth="1.7"
+                                />
+                              </svg>
+                            </button>
+                          </td>
                           <td>
                             <strong>{branch.count}</strong>
                           </td>
@@ -436,6 +488,78 @@ export default function AdminPage() {
                 </table>
               </div>
             </section>
+
+            {selectedBranchDetail && (
+              <section
+                className="branch-detail"
+                id="branch-detail"
+                ref={branchDetailRef}
+                aria-labelledby="branch-detail-title"
+              >
+                <div className="branch-detail-head">
+                  <div>
+                    <p className="micro" lang="en">
+                      Branch roster
+                    </p>
+                    <h4 id="branch-detail-title">
+                      {selectedBranchDetail.name}
+                    </h4>
+                    <p className="branch-detail-meta">
+                      {selectedBranchDetail.count} രജിസ്ട്രേഷൻ ·{" "}
+                      {selectedBranchDetail.checked} ഹാജർ
+                    </p>
+                  </div>
+                  <button
+                    className="text-button branch-detail-close"
+                    type="button"
+                    onClick={() => setSelectedBranch(null)}
+                  >
+                    അടയ്ക്കുക
+                  </button>
+                </div>
+
+                <div
+                  className="table-scroll"
+                  tabIndex={0}
+                  aria-label={`${selectedBranchDetail.name} ശാഖയിലെ രജിസ്ട്രേഷനുകൾ; കൂടുതൽ കാണാൻ വലത്തേക്ക് സ്ക്രോൾ ചെയ്യുക`}
+                >
+                  <table className="branch-roster-table">
+                    <thead>
+                      <tr>
+                        <th>പേര്</th>
+                        <th>ചുമതല</th>
+                        <th>മൊബൈൽ</th>
+                        <th>ഹാജർ</th>
+                        <th>ഹാജർ സമയം</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {selectedBranchDetail.rows.map((row) => (
+                        <tr key={row.id}>
+                          <td>
+                            <strong>{row.full_name}</strong>
+                          </td>
+                          <td>{row.role}</td>
+                          <td className="cell-phone">{row.phone}</td>
+                          <td>
+                            {row.checked_in_at ? (
+                              <span className="status-met">ഹാജർ</span>
+                            ) : (
+                              <span className="status-pending">ഇല്ല</span>
+                            )}
+                          </td>
+                          <td className="cell-time">
+                            {row.checked_in_at
+                              ? formatMalayalamDate(row.checked_in_at)
+                              : "—"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
 
             <section className="admin-section" aria-labelledby="full-table-title">
               <h3 id="full-table-title">മുഴുവൻ പട്ടിക</h3>
