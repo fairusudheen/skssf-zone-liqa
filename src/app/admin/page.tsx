@@ -10,7 +10,7 @@ import {
   downloadCsv,
   formatMalayalamDate,
 } from "@/lib/admin-api";
-import { TARGET_PER_BRANCH } from "@/lib/constants";
+import { BRANCHES, TARGET_PER_BRANCH } from "@/lib/constants";
 import type { RegistrationRow } from "@/lib/types";
 
 async function requestRows(session: Session) {
@@ -94,18 +94,24 @@ export default function AdminPage() {
       string,
       { key: string; name: string; count: number; checked: number }
     >();
+
+    BRANCHES.forEach((name) => {
+      groups.set(name, { key: name, name, count: 0, checked: 0 });
+    });
+
     rows.forEach((row) => {
-      const key = row.branch_key || row.branch_name;
-      const current = groups.get(key) || {
-        key,
-        name: row.branch_name,
+      const name = row.branch_name;
+      const current = groups.get(name) || {
+        key: name,
+        name,
         count: 0,
         checked: 0,
       };
       current.count += 1;
       if (row.checked_in_at) current.checked += 1;
-      groups.set(key, current);
+      groups.set(name, current);
     });
+
     return [...groups.values()].sort(
       (a, b) => b.count - a.count || a.name.localeCompare(b.name, "ml"),
     );
@@ -119,9 +125,7 @@ export default function AdminPage() {
 
     return {
       ...branch,
-      rows: rows.filter(
-        (row) => (row.branch_key || row.branch_name) === selectedBranch,
-      ),
+      rows: rows.filter((row) => row.branch_name === selectedBranch),
     };
   }, [branches, rows, selectedBranch]);
 
@@ -382,7 +386,7 @@ export default function AdminPage() {
               </div>
               <div className="admin-stat">
                 <span className="admin-stat-value">{branches.length}</span>
-                <span className="admin-stat-label">ശാഖകൾ</span>
+                <span className="admin-stat-label">ആകെ ശാഖകൾ</span>
               </div>
               <div className="admin-stat">
                 <span className="admin-stat-value">{completed}</span>
@@ -414,7 +418,19 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {branches.length ? (
+                    {loading && !rows.length ? (
+                      <tr>
+                        <td colSpan={5} className="empty-row">
+                          ശാഖ വിവരങ്ങൾ എടുക്കുന്നു…
+                        </td>
+                      </tr>
+                    ) : error && !rows.length ? (
+                      <tr>
+                        <td colSpan={5} className="empty-row">
+                          {error}
+                        </td>
+                      </tr>
+                    ) : branches.length ? (
                       branches.map((branch) => (
                         <tr key={branch.key}>
                           <td>
@@ -534,27 +550,35 @@ export default function AdminPage() {
                       </tr>
                     </thead>
                     <tbody>
-                      {selectedBranchDetail.rows.map((row) => (
-                        <tr key={row.id}>
-                          <td>
-                            <strong>{row.full_name}</strong>
-                          </td>
-                          <td>{row.role}</td>
-                          <td className="cell-phone">{row.phone}</td>
-                          <td>
-                            {row.checked_in_at ? (
-                              <span className="status-met">ഹാജർ</span>
-                            ) : (
-                              <span className="status-pending">ഇല്ല</span>
-                            )}
-                          </td>
-                          <td className="cell-time">
-                            {row.checked_in_at
-                              ? formatMalayalamDate(row.checked_in_at)
-                              : "—"}
+                      {selectedBranchDetail.rows.length ? (
+                        selectedBranchDetail.rows.map((row) => (
+                          <tr key={row.id}>
+                            <td>
+                              <strong>{row.full_name}</strong>
+                            </td>
+                            <td>{row.role}</td>
+                            <td className="cell-phone">{row.phone}</td>
+                            <td>
+                              {row.checked_in_at ? (
+                                <span className="status-met">ഹാജർ</span>
+                              ) : (
+                                <span className="status-pending">ഇല്ല</span>
+                              )}
+                            </td>
+                            <td className="cell-time">
+                              {row.checked_in_at
+                                ? formatMalayalamDate(row.checked_in_at)
+                                : "—"}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={5} className="empty-row">
+                            ഈ ശാഖയിൽ ഇതുവരെ രജിസ്ട്രേഷനുകൾ ഇല്ല.
                           </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>
